@@ -12,15 +12,15 @@ class NoteModel(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     user = db.relationship("UserModel")
 
-    def __init__(self, user_id, title, note, priority):
-        self.user_id = user_id
+    def __init__(self, title, note, priority, user_id):
         self.title = title
         self.note = note
-        self.priority = priority
+        self.priority = priority,
+        self.user_id = user_id
 
     def json(self):
-        return {"note_id": self.id, "user_id": self.user_id,
-                "title": self.title, "note": self.note, "priority": self.priority}
+        return {"note_id": self.id, "title": self.title,
+                "note": self.note, "priority": self.priority, "user_id": self.user_id}
 
     @classmethod
     def find_by_note_id(cls, _id):

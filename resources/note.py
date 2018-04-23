@@ -4,21 +4,24 @@ from models.note import NoteModel
 from models.user import UserModel
 
 parser = reqparse.RequestParser()
-parser.add_argument("user_id", type=float, required=True, help="Every item needs a user id!")
+parser.add_argument("title", type=str, required=False)
+parser.add_argument("note", type=str, required=False)
+parser.add_argument("priority", type=int, required=False)
+parser.add_argument("user_id", type=int, required=True, help="Every note needs a user id!")
 
 
 class Note(Resource):
     @jwt_required
-    def get(self, _id):
-        note = NoteModel.find_by_note_id(_id)
+    def get(self, note_id):
+        note = NoteModel.find_by_note_id(note_id)
         if note:
             return note.json()
-        return {"message", "note not found"}, 404
+        return {"message": "note not found"}, 404
 
     @jwt_required
-    def put(self, _id):
+    def put(self, note_id):
         data = parser.parse_args()
-        note = NoteModel.find_by_note_id(_id)
+        note = NoteModel.find_by_note_id(note_id)
 
         if note is None:
             note = NoteModel(**data)
@@ -35,7 +38,7 @@ class Note(Resource):
         return note.json()
 
     @jwt_required
-    def delete(self, _id):
+    def delete(self, note_id):
         pass
 
 
@@ -43,12 +46,9 @@ class NewNote(Resource):
     @jwt_required
     def post(self):
         data = parser.parse_args()
-        note = NoteModel(data["user_id"], data["title"], data["note"], data["priority"])
-
-        try:
-            note.save_to_db()
-        except:
-            return {"message": "An error occurred saving the item."}, 500
+        note = NoteModel(**data)
+        print(note.json())
+        note.save_to_db()
 
         return note.json(), 201
 

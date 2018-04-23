@@ -32,7 +32,7 @@ def check_if_token_in_blacklist(decrypted_token):
     return RevokedTokenModel.is_jti_blacklisted(jti)
 
 
-api.add_resource(Note, "/note/<string:id>")
+api.add_resource(Note, "/note/<int:note_id>")
 api.add_resource(NewNote, "/note/new")
 api.add_resource(NoteList, "/notes/<string:username>")
 api.add_resource(UserRegister, "/register")
