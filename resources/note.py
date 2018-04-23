@@ -7,7 +7,7 @@ parser = reqparse.RequestParser()
 parser.add_argument("title", type=str, required=False)
 parser.add_argument("note", type=str, required=False)
 parser.add_argument("priority", type=int, required=False)
-parser.add_argument("user_id", type=int, required=True, help="Every note needs a user id!")
+parser.add_argument("user_id", type=int, required=True, help="Every note needs a user id.")
 
 
 class Note(Resource):
@@ -39,7 +39,11 @@ class Note(Resource):
 
     @jwt_required
     def delete(self, note_id):
-        pass
+        note = NoteModel.find_by_note_id(note_id)
+        if note:
+            note.delete_from_db()
+
+        return{"message": "note deleted"}
 
 
 class NewNote(Resource):
@@ -47,8 +51,11 @@ class NewNote(Resource):
     def post(self):
         data = parser.parse_args()
         note = NoteModel(**data)
-        print(note.json())
-        note.save_to_db()
+
+        try:
+            note.save_to_db()
+        except:
+            return {"message": "An error occurred saving the item."}, 500
 
         return note.json(), 201
 

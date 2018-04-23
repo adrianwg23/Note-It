@@ -15,7 +15,7 @@ class NoteModel(db.Model):
     def __init__(self, title, note, priority, user_id):
         self.title = title
         self.note = note
-        self.priority = priority,
+        self.priority = priority
         self.user_id = user_id
 
     def json(self):
@@ -31,5 +31,5 @@ class NoteModel(db.Model):
         db.session.commit()
 
     def delete_from_db(self):
-        db.session.remove(self)
+        db.session.delete(self)
         db.session.commit()
