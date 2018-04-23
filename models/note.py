@@ -4,7 +4,7 @@ from db import db
 class NoteModel(db.Model):
     __tablename__ = "notes"
 
-    id = db.Column(db.Integer, primaryKey=True)
+    id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
     note = db.Column(db.String)
     priority = db.Column(db.Integer)
@@ -12,11 +12,11 @@ class NoteModel(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     user = db.relationship("UserModel")
 
-    def __init__(self, title, note, priority, user_id):
+    def __init__(self, user_id, title, note, priority):
+        self.user_id = user_id
         self.title = title
         self.note = note
         self.priority = priority
-        self.user_id = user_id
 
     def json(self):
         return {"note_id": self.id, "user_id": self.user_id,
