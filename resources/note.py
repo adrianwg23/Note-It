@@ -61,6 +61,7 @@ class NewNote(Resource):
 
 
 class NoteList(Resource):
+    @jwt_required
     def get(self, username):
         user = UserModel.find_by_username(username)
         if user:
