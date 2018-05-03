@@ -18,14 +18,14 @@ class UserRegister(Resource):
         data = parser.parse_args()
 
         if UserModel.find_by_username(data["username"]):
-            return {"message": "A user with that username already exists"}, 400
+            return {"msg": "A user with that username already exists"}, 400
 
         user = UserModel(data["username"], generate_password_hash(data["password"]))
         try:
             user.save_to_db()
-            return {"message": "User created successfully"}, 201
+            return {"msg": "User created successfully"}, 201
         except:
-            return {"message": "An error occurred creating the user"}, 500
+            return {"msg": "An error occurred creating the user"}, 500
 
 
 class UserLogin(Resource):
@@ -39,7 +39,7 @@ class UserLogin(Resource):
             }
             return ret, 200
 
-        return {"message": "Bad username or password"}, 401
+        return {"msg": "Bad username or password"}, 401
 
 
 class UserLogoutAccess(Resource):
@@ -49,9 +49,9 @@ class UserLogoutAccess(Resource):
         try:
             revoked_token = RevokedTokenModel(jti=jti)
             revoked_token.add()
-            return {'message': 'Access token has been revoked'}
+            return {'msg': 'Access token has been revoked'}
         except:
-            return {'message': 'Something went wrong'}, 500
+            return {'msg': 'Something went wrong'}, 500
 
 
 class UserLogoutRefresh(Resource):
@@ -61,9 +61,9 @@ class UserLogoutRefresh(Resource):
         try:
             revoked_token = RevokedTokenModel(jti=jti)
             revoked_token.add()
-            return {'message': 'Refresh token has been revoked'}
+            return {'msg': 'Refresh token has been revoked'}
         except:
-            return {'message': 'Something went wrong'}, 500
+            return {'msg': 'Something went wrong'}, 500
 
 
 class TokenRefresh(Resource):
