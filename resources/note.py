@@ -16,7 +16,7 @@ class Note(Resource):
         note = NoteModel.find_by_note_id(note_id)
         if note:
             return note.json()
-        return {"msg": "note not found"}, 404
+        return {"message": "note not found"}, 404
 
     @jwt_required
     def put(self, note_id):
@@ -33,7 +33,7 @@ class Note(Resource):
         try:
             note.save_to_db()
         except:
-            return {"msg": "An error occurred saving the item."}, 500
+            return {"message": "An error occurred saving the item."}, 500
 
         return note.json()
 
@@ -43,7 +43,7 @@ class Note(Resource):
         if note:
             note.delete_from_db()
 
-        return{"msg": "note deleted"}
+        return{"message": "note deleted"}
 
 
 class NewNote(Resource):
@@ -55,7 +55,7 @@ class NewNote(Resource):
         try:
             note.save_to_db()
         except:
-            return {"msg": "An error occurred saving the item."}, 500
+            return {"message": "An error occurred saving the item."}, 500
 
         return note.json(), 201
 
@@ -66,4 +66,4 @@ class NoteList(Resource):
         user = UserModel.find_by_username(username)
         if user:
             return user.item_json()
-        return {"msg": "user not found"}, 404
+        return {"message": "user not found"}, 404
