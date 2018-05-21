@@ -20,6 +20,9 @@ class UserModel(db.Model):
     def user_json(self):
         return {"user_id": self.id, "username": self.username, "password": self.password}
 
+    def get_note_list(self):
+        return {"notes": [note.json() for note in self.notes.all()]}
+
     @classmethod
     def find_by_username(cls, username):
         return cls.query.filter_by(username=username).first()

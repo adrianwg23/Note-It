@@ -4,7 +4,7 @@ from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
-from resources.note import Note, NewNote, NoteList
+from resources.note import Note, NewNote, NoteList, Sync
 from resources.user import UserRegister, UserLogin, UserLogoutAccess, UserLogoutRefresh, TokenRefresh, UserList
 from models.revoked_token import RevokedTokenModel
 
@@ -34,6 +34,7 @@ def check_if_token_in_blacklist(decrypted_token):
     return RevokedTokenModel.is_jti_blacklisted(jti)
 
 
+api.add_resource(Sync, "/sync/<string:username>")
 api.add_resource(Note, "/note/<int:note_id>")
 api.add_resource(NewNote, "/note/new")
 api.add_resource(NoteList, "/notes/<string:username>")
