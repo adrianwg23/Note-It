@@ -35,7 +35,8 @@ class UserLogin(Resource):
         if user and check_password_hash(user.password, data["password"]):
             ret = {
                 "access_token": create_access_token(identity=user.username),
-                "refresh_token": create_refresh_token(identity=user.username)
+                "refresh_token": create_refresh_token(identity=user.username),
+                "user_id": user.id
             }
             return ret, 200
 
