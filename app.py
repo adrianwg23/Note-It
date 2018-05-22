@@ -22,6 +22,7 @@ api = Api(app)
 
 
 app.config["JWT_SECRET_KEY"] = '\x9a\xf5\xba.qTE<e\xd2\xd4\x1c\x13\xa2\x83\x8a\x90\xbb\xfe\xb5%\xd0\xa1#'
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = False
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = False
 app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
