@@ -11,7 +11,7 @@ parser.add_argument("updated_at", type=int, required=True, help="Every note need
 parser.add_argument("user_id", type=int, required=True, help="Every note needs a user id.")
 
 sync_parser = reqparse.RequestParser()
-sync_parser.add_argument("note_list", type=list, required=True)
+sync_parser.add_argument("notes", type=list, required=True)
 
 
 class Note(Resource):
@@ -48,7 +48,7 @@ class Note(Resource):
         if note:
             note.delete_from_db()
 
-        return{"message": "note deleted"}
+        return {"message": "note deleted"}
 
 
 class NewNote(Resource):
@@ -79,36 +79,35 @@ class Sync(Resource):
     def post(self, username):
         user = UserModel.find_by_username(username)
         my_dict = user.item_json()
-        size = 0
+        data = sync_parser.parse_args()
 
-        client_note_list = sync_parser.parse_args()
+        client_note_list = data["notes"]
         server_note_list = my_dict["notes"]
 
-        if len(client_note_list) - len(server_note_list) >= 0:
-            size = len(client_note_list)
-        else:
-            size = len(server_note_list)
+        client_note_id_list = [x["note_id"] for x in client_note_list]
+        server_note_id_list = [x["note_id"] for x in server_note_list]
 
-        for x in range(size):
-            client_note = client_note_list.get(x)
-            server_note = server_note_list.get(x)
+        a = set(client_note_id_list)
+        b = set(server_note_id_list)
 
-            if client_note["note_id"] == server_note["note_id"]:
-                # If the user updated a note client side
-                if client_note["updated_at"] != server_note["updated_at"]:
-                    note = NoteModel.find_by_note_id(client_note["note_id"])
-                    note.title = client_note["title"]
-                    note.note = client_note["note"]
-                    note.priority = client_note["priority"]
-                    note.updated_at = client_note["updated_at"]
-                    note.save_to_db()
-            # If user added a note client side
-            elif client_note["note_id"] > server_note["note_id"]:
-                note = NoteModel(**client_note)
-                note.save_to_db()
-            # If user deleted a note client side
-            elif client_note["note"] < server_note["note_id"]:
-                note = NoteModel.find_by_note_id(server_note["note_id"])
-                note.delete_from_db()
+        add_list = [x for x in client_note_list if x["note_id"] not in b]
+        delete_list = [x for x in server_note_list if x["note_id"] not in a]
+        intersection_list = [x for x in client_note_list if x["note_id"] in b]
 
-        return {"notes": client_note_list}
+        for add_note in add_list:
+            note = NoteModel(**add_note)
+            note.save_to_db()
+
+        for delete_note in delete_list:
+            note = NoteModel.find_by_note_id(delete_note["note_id"])
+            note.delete_from_db()
+
+        for intersection_note in intersection_list:
+            note = NoteModel.find_by_note_id(intersection_note["note_id"])
+            note.title = intersection_note["title"]
+            note.note = intersection_note["note"]
+            note.priority = intersection_note["priority"]
+            note.updated_at = intersection_note["updated_at"]
+
+
+        return {"notes": add_list}
